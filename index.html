@@ -1,3 +1,13 @@
+<!--
+  Name: Shreya Jayas
+  Date: 03/20/2025
+  CSC 372-01
+
+  This is the main HTML file for the GitHub Gallery project.
+  It dynamically loads GitHub repository data using JavaScript.
+  The page displays repositories in a card format with details like name, description, languages, and commit count.
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,6 +19,8 @@
 <body>
     <div class="container">
         <h1>GitHub Gallery</h1>
+        <input type="text" id="username" placeholder="Enter GitHub username" />
+        <button id="searchButton">Search</button>
         <div id="repo-gallery"></div>
     </div>
 

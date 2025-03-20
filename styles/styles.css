@@ -1,3 +1,13 @@
+/*
+  Name: Shreya Jayas
+  Date: 03/20/2025
+  CSC 372-01
+
+  This is the stylesheet for the GitHub Gallery project.
+  It defines the layout, styling, and responsiveness of the repository cards.
+  The design ensures a clean, professional look with a flexible grid layout.
+*/
+
 #repo-gallery {
     display: flex;
     flex-wrap: wrap;
@@ -15,7 +25,7 @@
     text-align: left;
     border: 1px solid #d1d1d1;
     transition: transform 0.2s ease-in-out;
-    min-height: 180px;
+    min-height: 200px;
     box-sizing: border-box;
 }
 
@@ -32,8 +42,8 @@
 }
 
 .repo-card h3 a img {
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
     margin-right: 8px;
 }
 

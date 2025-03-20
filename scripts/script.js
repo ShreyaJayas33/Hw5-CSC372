@@ -1,9 +1,25 @@
+/*
+  Name: Shreya Jayas
+  Date: 03/20/2025
+  CSC 372-01
+
+  This script fetches repository data from the GitHub API and dynamically 
+  generates a gallery of repositories based on the user's input.
+*/
+
 const GITHUB_TOKEN = window.GITHUB_TOKEN;
 
 const repoGallery = document.getElementById('repo-gallery');
 const usernameInput = document.getElementById('username');
 
-async function fetchRepos(username = 'ShreyaJayas33') {
+async function fetchRepos(username) {
+    if (!username) {
+        username = usernameInput.value.trim(); // Get input from search field
+    }
+    if (!username) {
+        username = 'ShreyaJayas33'; // Default username if none provided
+    }
+
     const apiUrl = `https://api.github.com/users/${username}/repos?per_page=20&sort=updated`;
 
     const headers = {
@@ -31,24 +47,43 @@ async function displayRepos(repos) {
         const languages = await fetchLanguages(repo.languages_url);
         const commits = await fetchCommits(repo.commits_url.replace('{/sha}', ''));
 
-        const repoCard = `
-        <div class="repo-card">
-            <h3>
-                <a href="${repoUrl}" target="_blank">
-                    <img src="gitlogo.png" alt="GitHub Logo" width="20" height="20" style="margin-right: 8px;"> 
-                    ${repo.name}
-                </a>
-            </h3>
-            <p>${repo.description || 'No description'}</p>
-            <p><strong>Created:</strong> ${createdAt}</p>
-            <p><strong>Updated:</strong> ${updatedAt}</p>
-            <p><strong>Languages:</strong> ${languages}</p>
-            <p><strong>Commits:</strong> ${commits}</p>
-            <p><strong>Watchers:</strong> ${repo.watchers}</p>
-        </div>
-    `;
-    
-        repoGallery.innerHTML += repoCard;
+        const repoCard = document.createElement('div');
+        repoCard.classList.add('repo-card');
+
+        const repoTitle = document.createElement('h3');
+        const repoLink = document.createElement('a');
+        repoLink.href = repoUrl;
+        repoLink.target = "_blank";
+        repoLink.innerHTML = `<img src="gitlogo.png" alt="GitHub Logo" width="20" height="20" style="margin-right: 8px;"> ${repo.name}`;
+        repoTitle.appendChild(repoLink);
+
+        const description = document.createElement('p');
+        description.textContent = repo.description || 'No description';
+
+        const createdDate = document.createElement('p');
+        createdDate.innerHTML = `<strong>Created:</strong> ${createdAt}`;
+
+        const updatedDate = document.createElement('p');
+        updatedDate.innerHTML = `<strong>Updated:</strong> ${updatedAt}`;
+
+        const languagesInfo = document.createElement('p');
+        languagesInfo.innerHTML = `<strong>Languages:</strong> ${languages}`;
+
+        const commitsInfo = document.createElement('p');
+        commitsInfo.innerHTML = `<strong>Commits:</strong> ${commits}`;
+
+        const watchersInfo = document.createElement('p');
+        watchersInfo.innerHTML = `<strong>Watchers:</strong> ${repo.watchers}`;
+
+        repoCard.appendChild(repoTitle);
+        repoCard.appendChild(description);
+        repoCard.appendChild(createdDate);
+        repoCard.appendChild(updatedDate);
+        repoCard.appendChild(languagesInfo);
+        repoCard.appendChild(commitsInfo);
+        repoCard.appendChild(watchersInfo);
+
+        repoGallery.appendChild(repoCard);
     }
 }
 
@@ -73,7 +108,12 @@ async function fetchCommits(url) {
 }
 
 // Load default profile on page load
-document.addEventListener('DOMContentLoaded', () => fetchRepos());
+document.addEventListener('DOMContentLoaded', () => fetchRepos('ShreyaJayas33'));
+
+// Handle search button click
+document.getElementById('searchButton').addEventListener('click', () => {
+    fetchRepos(usernameInput.value.trim());
+});
 
 // Handle Enter key search
 usernameInput.addEventListener('keypress', (event) => {
