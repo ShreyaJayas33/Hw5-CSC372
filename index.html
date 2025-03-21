@@ -3,30 +3,35 @@
   Date: 03/20/2025
   CSC 372-01
 
-  This is the main HTML file for the GitHub Gallery project.
-  It dynamically loads GitHub repository data using JavaScript.
-  The page displays repositories in a card format with details like name, description, languages, and commit count.
+  This is the GitHub Gallery webpage that displays a list of repositories for a GitHub user.
+  It uses the GitHub API to fetch repository data and shows the latest 20 repositories.
+  A default user is loaded on page load, and a search box allows fetching other users.
+
+  NOTE TO GRADER:
+  Please check your email and follow up with me if needed regarding grading this submission.
+  Since I cannot upload the GitHub token for privacy reasons, the project now works using public fetch
+  as per instructor's guidelines. No token is required and the GitHub API allows 60 calls/hour.
+  The page will work directly via GitHub Pages after pushing.
 -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GitHub Gallery</title>
-    <link rel="stylesheet" href="styles/styles.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>GitHub Gallery</title>
+  <link rel="stylesheet" href="styles/styles.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>GitHub Gallery</h1>
-        <input type="text" id="username" placeholder="Enter GitHub username" />
-        <button id="searchButton">Search</button>
-        <div id="repo-gallery"></div>
+  <div class="container">
+    <h1>GitHub Repository Gallery</h1>
+    <div class="search-bar">
+      <input type="text" id="username" placeholder="Enter GitHub username..." />
+      <button id="searchButton">Search</button>
     </div>
+    <div id="repo-gallery"></div>
+  </div>
 
-    <script src="scripts/config.js"></script>
-    <script src="scripts/script.js"></script>
+  <script src="scripts/script.js"></script>
 </body>
 </html>

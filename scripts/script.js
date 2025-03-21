@@ -7,31 +7,22 @@
   generates a gallery of repositories based on the user's input.
 */
 
-if (typeof GITHUB_TOKEN === 'undefined') {
-    const GITHUB_TOKEN = window.GITHUB_TOKEN;
-}
-
 const repoGallery = document.getElementById('repo-gallery');
 const usernameInput = document.getElementById('username');
-const searchButton = document.getElementById('searchButton');
 
-/**
- * Fetches repositories from GitHub API based on the username.
- * @param {string} username - GitHub username.
- */
-async function fetchRepos(username = 'ShreyaJayas33') {
-    username = username.trim() || 'ShreyaJayas33'; // Ensure a valid username
+async function fetchRepos(username) {
+    if (!username) {
+        username = usernameInput.value.trim(); // Get input from search field
+    }
+    if (!username) {
+        username = 'ShreyaJayas33'; // Default username
+    }
 
     const apiUrl = `https://api.github.com/users/${username}/repos?per_page=20&sort=updated`;
 
-    const headers = GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}`, Accept: 'application/vnd.github+json' } : {};
-
     try {
-        const response = await fetch(apiUrl, { headers });
-
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
+        const response = await fetch(apiUrl);
+        if (!response.ok) throw new Error('User not found or rate limit exceeded');
 
         const repos = await response.json();
         displayRepos(repos);
@@ -40,18 +31,8 @@ async function fetchRepos(username = 'ShreyaJayas33') {
     }
 }
 
-/**
- * Displays repository data in the gallery.
- * @param {Array} repos - List of repository objects.
- */
 async function displayRepos(repos) {
-    repoGallery.innerHTML = ''; // Clear previous results
-
-    if (repos.length === 0) {
-        repoGallery.innerHTML = '<p class="error">No repositories found.</p>';
-        return;
-    }
-
+    repoGallery.innerHTML = '';
     for (const repo of repos) {
         const repoUrl = repo.html_url;
         const createdAt = new Date(repo.created_at).toLocaleDateString();
@@ -59,11 +40,9 @@ async function displayRepos(repos) {
         const languages = await fetchLanguages(repo.languages_url);
         const commits = await fetchCommits(repo.commits_url.replace('{/sha}', ''));
 
-        // Create repository card
         const repoCard = document.createElement('div');
         repoCard.classList.add('repo-card');
 
-        // Repository Title with GitHub Icon
         const repoTitle = document.createElement('h3');
         const repoLink = document.createElement('a');
         repoLink.href = repoUrl;
@@ -71,7 +50,6 @@ async function displayRepos(repos) {
         repoLink.innerHTML = `<img src="gitlogo.png" alt="GitHub Logo" width="20" height="20" style="margin-right: 8px;"> ${repo.name}`;
         repoTitle.appendChild(repoLink);
 
-        // Repository Details
         const description = document.createElement('p');
         description.textContent = repo.description || 'No description';
 
@@ -90,21 +68,21 @@ async function displayRepos(repos) {
         const watchersInfo = document.createElement('p');
         watchersInfo.innerHTML = `<strong>Watchers:</strong> ${repo.watchers}`;
 
-        // Append all elements to the card
-        repoCard.append(repoTitle, description, createdDate, updatedDate, languagesInfo, commitsInfo, watchersInfo);
+        repoCard.appendChild(repoTitle);
+        repoCard.appendChild(description);
+        repoCard.appendChild(createdDate);
+        repoCard.appendChild(updatedDate);
+        repoCard.appendChild(languagesInfo);
+        repoCard.appendChild(commitsInfo);
+        repoCard.appendChild(watchersInfo);
 
-        // Append the card to the gallery
         repoGallery.appendChild(repoCard);
     }
 }
 
-/**
- * Fetches languages used in a repository.
- * @param {string} url - API URL for repository languages.
- */
 async function fetchLanguages(url) {
     try {
-        const response = await fetch(url, { headers: GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {} });
+        const response = await fetch(url);
         const data = await response.json();
         return Object.keys(data).join(', ') || 'Unknown';
     } catch {
@@ -112,13 +90,9 @@ async function fetchLanguages(url) {
     }
 }
 
-/**
- * Fetches the number of commits in a repository.
- * @param {string} url - API URL for repository commits.
- */
 async function fetchCommits(url) {
     try {
-        const response = await fetch(url, { headers: GITHUB_TOKEN ? { Authorization: `token ${GITHUB_TOKEN}` } : {} });
+        const response = await fetch(url);
         const commits = await response.json();
         return commits.length || 'Unknown';
     } catch {
@@ -127,16 +101,16 @@ async function fetchCommits(url) {
 }
 
 // Load default profile on page load
-document.addEventListener('DOMContentLoaded', () => fetchRepos());
+document.addEventListener('DOMContentLoaded', () => fetchRepos('ShreyaJayas33'));
 
 // Handle search button click
-searchButton.addEventListener('click', () => {
+document.getElementById('searchButton').addEventListener('click', () => {
     fetchRepos(usernameInput.value.trim());
 });
 
 // Handle Enter key search
 usernameInput.addEventListener('keypress', (event) => {
-    if (event.key === 'Enter') {
+    if (event.key === 'Enter' && usernameInput.value.trim() !== '') {
         fetchRepos(usernameInput.value.trim());
     }
 });
